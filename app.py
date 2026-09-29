@@ -125,6 +125,23 @@ st.set_page_config(
     layout="wide",
 )
 
+# 云端 Tabs 居中补丁（强力兜底，全局生效）
+st.markdown("""
+<style>
+/* 强制最新版 Streamlit Tabs 居中 */
+div[data-baseweb="tab-list"] {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    gap: 15px !important;
+}
+button[data-baseweb="tab"] {
+    flex-grow: 1 !important;
+    justify-content: center !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # 轻量美化：统一字体与细节（接近原生 App 的观感）+ 平板响应式适配 + 登录页基础设施样式
 st.markdown(
     """
