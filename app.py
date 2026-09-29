@@ -3010,6 +3010,62 @@ LOGIN_PAGE_CSS = """
         border: none !important; font-weight: 600;
     }
 
+    /* ---- 登录方式切换（云端最新版 Streamlit 健壮兼容）----
+       新版前端把 segmented_control 迁移为 BaseWeb TabList 渲染：
+       外层 data-testid="stSegmentedControl"（不是 stTabs），内层 [data-baseweb="tab-list"]，
+       按钮 [data-baseweb="tab"] + role="tab"。旧选择器（stButtonGroup / stBaseButton-*）
+       在新 DOM 上全部落空导致左对齐，以下规则新旧两代 DOM 同时覆盖、强制居中均匀分布。 */
+    [data-testid="stSegmentedControl"],
+    div[data-testid="stTabs"] {
+        width: 100% !important;
+    }
+    [data-testid="stSegmentedControl"] [data-baseweb="tab-list"],
+    [data-testid="stSegmentedControl"] [role="tablist"],
+    div[data-testid="stTabs"] [data-baseweb="tab-list"] {
+        display: flex !important;
+        justify-content: center !important;   /* 强制整组居中 */
+        align-items: center !important;
+        gap: 20px !important;
+        width: 100% !important;
+        flex-wrap: nowrap !important;
+        border-bottom: none !important;       /* BaseWeb TabList 自带下边框线，移除 */
+    }
+    /* 三个 Tab 平均分配宽度（flex:1）→ 均匀分布；去 flex:1 即紧凑居中 */
+    [data-testid="stSegmentedControl"] button[data-baseweb="tab"],
+    [data-testid="stSegmentedControl"] [role="tab"],
+    [data-testid="stSegmentedControl"] [data-testid*="stBaseButton-segmented_control"],
+    div[data-testid="stTabs"] [data-baseweb="tab"] {
+        flex: 1 1 0 !important;
+        justify-content: center !important;
+        text-align: center !important;
+        font-size: .85rem !important;
+        padding: 6px 16px !important;
+        white-space: nowrap !important;
+        border-radius: 8px !important;
+    }
+    /* 未选中态：透明底灰字（覆盖 BaseWeb 默认样式与 hover 底色） */
+    [data-testid="stSegmentedControl"] button[data-baseweb="tab"],
+    [data-testid="stSegmentedControl"] [role="tab"] {
+        background: transparent !important;
+        color: #7F8C8D !important;
+        border: none !important;
+        font-weight: 500;
+    }
+    [data-testid="stSegmentedControl"] button[data-baseweb="tab"]:hover,
+    [data-testid="stSegmentedControl"] [role="tab"]:hover {
+        background: rgba(115, 174, 82, .08) !important;
+        color: #2C3E50 !important;
+    }
+    /* 选中态：绿色药丸（同时兼容 aria-selected 新结构与旧 Active 类名） */
+    [data-testid="stSegmentedControl"] button[aria-selected="true"],
+    [data-testid="stSegmentedControl"] [role="tab"][aria-selected="true"],
+    [data-testid="stBaseButton-segmented_controlActive"] {
+        background: #73AE52 !important;
+        color: #fff !important;
+        border: none !important;
+        font-weight: 600;
+    }
+
     /* ---- 输入框：高 46px、#F9FAFB 填充、无边框、圆角 8px ---- */
     [data-testid="stLayoutWrapper"] > [data-testid="stVerticalBlock"]:has(#login-card-logo)
     [data-testid="stTextInput"] input {
