@@ -1,0 +1,10 @@
+# Streamlit 服务器与全局配置
+# 说明：maxUploadSize 与 app.py 中 MAX_UPLOAD_MB（20）保持一致，
+# 超过上限的文件在浏览器端就会被 Streamlit 拦截（app.py 内还有二次校验）。
+[server]
+maxUploadSize = 20
+
+# 前端异常展示：关闭后页面不显示报错细节/Traceback（需求 4），
+# 完整堆栈统一记录到 logs/error.log，用户只看到友好提示。
+[client]
+showErrorDetails = false

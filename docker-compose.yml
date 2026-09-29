@@ -1,0 +1,17 @@
+# 智学 AI 学习助手 - Docker Compose 部署
+# 启动：docker compose up -d --build
+# 停止：docker compose down
+# 日志：docker compose logs -f
+
+services:
+  zhixue:
+    build: .
+    container_name: zhixue-app
+    ports:
+      - "8501:8501"          # 宿主机端口:容器端口
+    env_file:
+      - .env                 # 注入 DEEPSEEK_API_KEY / ADMIN_PASSWORD 等
+    volumes:
+      - ./data:/app/data     # 课件与用户数据持久化（多租户隔离目录）
+      - ./logs:/app/logs     # business.log / error.log 持久化
+    restart: unless-stopped

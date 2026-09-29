@@ -1,0 +1,21 @@
+# 智学 AI 学习助手 - 依赖清单
+# 安装：pip install -r requirements.txt
+#
+# 以下为实测通过的版本下限（Python 3.10+）：
+#   streamlit 1.36+  / openai 1.30+  / pdfplumber 0.11+
+#   python-dotenv 1.0+ / networkx 3.0+ / numpy 1.26+ / pyvis 0.3.2+
+#   fpdf2 2.8+（会话导出 PDF；未安装时应用自动降级为仅 Markdown 导出）
+#   pillow（图片处理）/ plotly（评估雷达图）/ pandas（数据表格）
+
+streamlit
+pdfplumber
+python-docx
+openai
+networkx
+numpy
+pandas
+pillow
+plotly
+python-dotenv
+pyvis
+fpdf2
