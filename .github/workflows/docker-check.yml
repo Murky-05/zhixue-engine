@@ -1,0 +1,45 @@
+name: Docker 构建与容器运行验证
+
+on:
+  workflow_dispatch:   # 手动触发：Actions 页面点击 Run workflow
+
+jobs:
+  docker-check:
+    runs-on: ubuntu-latest   # CI 运行器自带 Docker 环境
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 准备环境变量文件（CI 用占位密钥，验证"Key 缺失不崩溃"的降级设计）
+        run: |
+          printf 'DEEPSEEK_API_KEY=dummy-key-for-ci\nADMIN_PASSWORD=dummy\n' > .env
+
+      - name: 构建镜像
+        run: docker compose build
+
+      - name: 启动容器
+        run: docker compose up -d
+
+      - name: 等待健康检查通过（HEALTHCHECK：30s 探活 · 失败 3 次判不健康）
+        run: |
+          status="starting"
+          for i in $(seq 1 12); do
+            status=$(docker inspect --format '{{.State.Health.Status}}' zhixue-app)
+            echo "第 ${i} 次健康检查：${status}"
+            [ "$status" = "healthy" ] && break
+            sleep 5
+          done
+          if [ "$status" != "healthy" ]; then
+            echo "健康检查未通过，容器日志："
+            docker logs zhixue-app
+            exit 1
+          fi
+
+      - name: 健康端点验证（Streamlit 内置 /_stcore/health）
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8501/_stcore/health)
+          echo "健康端点 HTTP 状态码：${code}"
+          [ "$code" = "200" ]
+
+      - name: 容器运行状态
+        run: docker compose ps
